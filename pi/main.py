@@ -31,12 +31,12 @@ def home():
 @app.route('/api/on', methods=['POST'])
 def show_text():
     turnOnLight()
-    return "pi-inMeeting is on"
+    return "light is on"
 
 @app.route('/api/off', methods=['POST'])
 def show_text():
     unicornhatmini.clear()
-    return "pi-inMeeting is off"
+    return "light is off"
 
 
 if __name__ == '__main__':

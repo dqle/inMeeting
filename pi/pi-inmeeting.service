@@ -3,8 +3,8 @@ Description=Pi inMeeting Flask
 After=network.target
 
 [Service]
-WorkingDirectory=/home/pi/inMeeting/pi
-ExecStart=python3 /home/pi/inMeeting/pi/main.py
+WorkingDirectory=PWD/inMeeting/pi
+ExecStart=python3 PWD/inMeeting/pi/main.py
 Restart=always
 
 [Install]

@@ -1,6 +1,7 @@
 #!/bin/bash
 
-PWD=${pwd}
+# Capture the current directory
+currentDir=$(pwd)
 
 echo "----------------------"
 echo "Enable SPI on your Pi"
@@ -31,34 +32,37 @@ echo "----------------------"
 echo "git clone inMeeting"
 echo "----------------------"
 
-echo "git clone https://github.com/dqle/inMeeting.git /home/pi/inMeeting"
-git clone https://github.com/dqle/inMeeting.git /home/pi/inMeeting
-cd /home/pi/inMeeting
+echo "git clone https://github.com/dqle/inMeeting.git"
+git clone https://github.com/dqle/inMeeting.git
+cd inMeeting
 git checkout feat/initial-version
+cd $currentDir
 
 echo ""
 echo "----------------------"
 echo "Install Piromoni Unicorn Hat Mini python package"
 echo "----------------------"
 
-cd /home/pi/inMeeting/pi
-echo no | sudo ./unicornhat-mini/install.sh
+cd $currentDir/inMeeting/pi/unicornhat-mini/
+echo no | sudo bash ./install.sh
 
 echo ""
 echo "----------------------"
 echo "Install Python package"
 echo "----------------------"
 
+cd $currentDir/inMeeting/pi
 pip3 install -r requirements.txt
-
 
 echo ""
 echo "----------------------"
 echo "Add program as a service"
 echo "----------------------"
 
-echo "cp pi-inmeeting.service /etc/systemd/system/"
-cp pi-inmeeting.service /etc/systemd/system/
+cd $currentDir
+sed -i "s|PWD|$currentDir|g" $currentDir/inMeeting/pi/pi-inmeeting.service
+echo "cp $currentDir/inMeeting/pi/pi-inmeeting.service /etc/systemd/system/"
+cp $currentDir/inMeeting/pi/pi-inmeeting.service /etc/systemd/system/
 systemctl daemon-reload
 
 
@@ -67,5 +71,5 @@ echo "----------------------"
 echo "Enable and Start service"
 echo "----------------------"
 
-systemctl enable pi-inmeeting
-systemctl start pi-inmeeting
+echo "systemctl enable pi-inmeeting && systemctl start pi-inmeeting"
+systemctl enable pi-inmeeting && systemctl start pi-inmeeting
