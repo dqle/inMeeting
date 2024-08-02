@@ -73,3 +73,11 @@ echo "----------------------"
 
 echo "systemctl enable pi-inmeeting && systemctl start pi-inmeeting"
 systemctl enable pi-inmeeting && systemctl start pi-inmeeting
+
+echo ""
+echo "----------------------"
+echo "Reboot"
+echo "----------------------"
+
+echo "reboot"
+reboot
