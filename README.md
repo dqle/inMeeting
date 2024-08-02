@@ -1,2 +1,4 @@
 # inMeeting
-inMeeting is an app that will turn your Raspberry Pi Piromoni Unicorn light on whenever you're in a meeting from your Google Calendar
+inMeeting is a Golang based app that create a System Tray icon that you can use to turn on your Raspberry Pi light when you're in a meeting or need some focus time!
+
+

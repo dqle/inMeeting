@@ -1,0 +1,11 @@
+[Unit]
+Description=Pi inMeeting Flask
+After=network.target
+
+[Service]
+WorkingDirectory=/home/pi/inMeeting/pi
+ExecStart=python3 /home/pi/inMeeting/pi/main.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
