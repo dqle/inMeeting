@@ -1,5 +1,7 @@
 #!/bin/bash
 
+PWD=${pwd}
+
 echo "----------------------"
 echo "Enable SPI on your Pi"
 echo "----------------------"
@@ -29,9 +31,10 @@ echo "----------------------"
 echo "git clone inMeeting"
 echo "----------------------"
 
-echo "git clone https://github.com/dqle/inMeeting.git /home/pi/"
-git clone https://github.com/dqle/inMeeting.git /home/pi/
-
+echo "git clone https://github.com/dqle/inMeeting.git /home/pi/inMeeting"
+git clone https://github.com/dqle/inMeeting.git /home/pi/inMeeting
+cd /home/pi/inMeeting
+git checkout feat/initial-version
 
 echo ""
 echo "----------------------"
@@ -39,7 +42,7 @@ echo "Install Piromoni Unicorn Hat Mini python package"
 echo "----------------------"
 
 cd /home/pi/inMeeting/pi
-echo no | ./unicornhat-mini/install.sh
+echo no | sudo ./unicornhat-mini/install.sh
 
 echo ""
 echo "----------------------"
@@ -54,6 +57,7 @@ echo "----------------------"
 echo "Add program as a service"
 echo "----------------------"
 
+echo "cp pi-inmeeting.service /etc/systemd/system/"
 cp pi-inmeeting.service /etc/systemd/system/
 systemctl daemon-reload
 
