@@ -34,9 +34,6 @@ echo "----------------------"
 
 echo "git clone https://github.com/dqle/inMeeting.git"
 git clone https://github.com/dqle/inMeeting.git
-cd inMeeting
-git checkout feat/initial-version
-cd $currentDir
 
 echo ""
 echo "----------------------"

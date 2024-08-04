@@ -3,34 +3,40 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"os"
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"time"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/driver/desktop"
 	"fyne.io/fyne/v2/widget"
+
+	mediaDevices "github.com/dqle/go-media-devices-state"
 )
 
 func main() {
 	app := app.New()
 	window := app.NewWindow("inMeeting")
 
+	window.SetIcon(appIcon)
+
 	//-----------------------------------------
 	// Setup Systray
 	//-----------------------------------------
-	if desk, ok := app.(desktop.App); ok {
-		systemTray := fyne.NewMenu("inMeeting",
-			fyne.NewMenuItem("Start", func() { log.Println("Tapped show") }),
-			fyne.NewMenuItem("Settings", func() {
-				window.Show()
-			}))
-		desk.SetSystemTrayMenu(systemTray)
-	}
+	desk, _ := app.(desktop.App)
+	systemTray := fyne.NewMenu("inMeeting",
+		fyne.NewMenuItem("Settings", func() {
+			window.Show()
+		}))
+	desk.SetSystemTrayMenu(systemTray)
+	desk.SetSystemTrayIcon(offIcon)
 
 	//-----------------------------------------
 	// Setup Settings Windows
@@ -60,7 +66,71 @@ func main() {
 	window.SetCloseIntercept(func() {
 		window.Hide()
 	})
-	window.ShowAndRun()
+
+	//-----------------------------------------
+	// Loop to watch device states in a separate goroutine
+	//-----------------------------------------
+	go func() {
+		for {
+			ipAddr := loadFromFile()
+			isCameraOn, cameraErr := mediaDevices.IsCameraOn()
+			isMicrophoneOn, microphoneErr := mediaDevices.IsMicrophoneOn()
+			if cameraErr != nil {
+				log.Println(cameraErr)
+			} else if microphoneErr != nil {
+				log.Println(microphoneErr)
+			} else {
+				if isCameraOn || isMicrophoneOn {
+					response, err := http.Get("http://" + ipAddr + "/status")
+					if err != nil {
+						log.Println(err)
+						continue
+					}
+
+					statusBody, err := io.ReadAll(response.Body)
+					if err != nil {
+						log.Println(err)
+						continue
+					}
+					if string(statusBody) == "off" {
+						_, err := http.Post("http://"+ipAddr+"/api/on", "", nil)
+						if err != nil {
+							log.Println(err)
+						}
+						desk.SetSystemTrayIcon(appIcon)
+						systemTray.Refresh()
+					}
+					log.Println("in meeting")
+
+				} else {
+					response, err := http.Get("http://" + ipAddr + "/status")
+					if err != nil {
+						log.Println(err)
+						continue
+					}
+
+					statusBody, err := io.ReadAll(response.Body)
+					if err != nil {
+						log.Println(err)
+						continue
+					}
+
+					if string(statusBody) == "on" {
+						_, err := http.Post("http://"+ipAddr+"/api/off", "", nil)
+						if err != nil {
+							log.Println(err)
+						}
+						desk.SetSystemTrayIcon(offIcon)
+						systemTray.Refresh()
+					}
+					log.Println("not in meeting")
+				}
+			}
+			time.Sleep(3 * time.Second)
+		}
+	}()
+
+	app.Run()
 }
 
 // -----------------------------------------
@@ -90,7 +160,7 @@ func settingsFileDir() (string, string) {
 func loadFromFile() string {
 	_, filePath := settingsFileDir()
 
-	// Return "" if file doens't exist
+	// Return "" if file doesn't exist
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		return ""
 	}
@@ -103,7 +173,7 @@ func loadFromFile() string {
 	}
 	defer file.Close()
 
-	// Return the ip address
+	// Return the IP address
 	scanner := bufio.NewScanner(file)
 	ipRegex := regexp.MustCompile(`ip = "(.*)"`)
 

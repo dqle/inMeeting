@@ -7,15 +7,18 @@ from unicornhatmini import UnicornHATMini
 app = Flask(__name__)
 unicornhatmini = UnicornHATMini()
 unicornhatmini.set_brightness(0.1)
+light_status = "off"
 
 def turn_on_light():
-    for x in range(17):
-        for y in range(7):
-            unicornhatmini.set_pixel(x, y, 255, 0, 0)
+    unicornhatmini.set_all(255, 0, 0)
+    global light_status
+    light_status = "on"
     unicornhatmini.show()
 
 def turn_off_light():
     unicornhatmini.clear()
+    global light_status
+    light_status = "off"
     unicornhatmini.show()
 
 # Disable logging
@@ -26,6 +29,10 @@ app.logger.disabled = True
 @app.route('/')
 def home():
     return "pi-inMeeting is running"
+
+@app.route('/status')
+def get_status():
+    return light_status
 
 @app.route('/api/on', methods=['POST'])
 def api_on():
