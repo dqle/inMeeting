@@ -7,6 +7,8 @@ Its system tray icon will change color depending on the states of the microphone
 
 See the demo below:
 
+https://github.com/user-attachments/assets/f4eae47d-51b2-4a76-9fe9-ff46029f32b9
+
 # Raspberry Pi Setup
 
 - Raspberry Pi Zero WH (or any Raspberry Pi with internet connection)
@@ -16,13 +18,13 @@ See the demo below:
 2. For OS, use the **Raspberry Pi Lite (32-bit)** version. Make sure that both are using the **_SAME WIFI NETWORK_**. Distro version doesn't matter, but for best compatibility, use **bullseye** distribution
 3. Once pi is boot up, run the below command to setup Pi:
 ```
-sudo bash -c "($ curl -fsSL https://raw.githubusercontent.com/dqle/inMeeting/main/pi-setup.sh)"
+sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/dqle/inMeeting/main/pi-setup.sh)"
 ```
 
 # How to use
 
 1. Download the appropriate package for your OS under the Release page and run it.
-2. Right-click the program, select `Settings` and enter your Raspberry Pi IP Address
+2. Right-click the program, select `Settings` and enter your Raspberry Pi IP Address:
 
-    ![settings](./repo_images/settings.png)
-3. Save settings and the program should work!
+    ![settings](./repo_media/settings.png)
+3. Save settings and join a meeting!
